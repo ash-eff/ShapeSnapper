@@ -6,16 +6,17 @@ public class ShapeSpawner : MonoBehaviour
 {
     public Shape[] shapes;
     public LayerMask clickMask;
-    public float spawnSpeed;
-    public int numberSpawned;
+    public float maxShapes;
 
-    Camera cam;
-    float screenWidth;
-    float screenHeight;
-    float offset = .5f;
+    private GameController gc;
+    private Camera cam;
+    private float screenWidth;
+    private float screenHeight;
+    private float offset = .5f;
 
     private void Start()
     {
+        gc = FindObjectOfType<GameController>();
         cam = Camera.main;
         screenHeight = cam.orthographicSize - offset;
         screenWidth = cam.aspect * cam.orthographicSize - offset;
@@ -25,20 +26,25 @@ public class ShapeSpawner : MonoBehaviour
 
     IEnumerator SpawnShapes()
     {
-        while(true)
+        while(!gc.GameOver)
         {           
-            float randX = Random.Range(-screenWidth, screenWidth);
-            float randY = Random.Range(-screenHeight, screenHeight);
-            Vector2 instPos = new Vector2(randX, randY);
-            // shoot ray and check area
-            RaycastHit2D hit = Physics2D.BoxCast(instPos, Vector2.one, 0, Vector2.zero);
-
-            if (!hit) // if area is occupied, try again
+            while(gc.ShapesOnScreen < maxShapes)
             {
-                numberSpawned++;
-                int ind = Random.Range(0, shapes.Length);
-                Instantiate(shapes[ind], instPos, Quaternion.identity);
-                yield return new WaitForSecondsRealtime(spawnSpeed);
+                float randX = Random.Range(-screenWidth, screenWidth);
+                float randY = Random.Range(-screenHeight, screenHeight);
+                Vector2 instPos = new Vector2(randX, randY);
+                // shoot ray and check area
+                RaycastHit2D hit = Physics2D.BoxCast(instPos, Vector2.one, 0, Vector2.zero);
+
+                if (!hit) // if area is occupied, try again
+                {
+                    gc.ShapesOnScreen++;
+                    int ind = Random.Range(0, shapes.Length);
+                    Instantiate(shapes[ind], instPos, Quaternion.identity);
+                    yield return new WaitForSeconds(gc.SpawnSpeed);
+                }
+
+                yield return null;
             }
 
             yield return null;

@@ -8,8 +8,20 @@ public class InputHandler : MonoBehaviour
     public GameObject checkItem;
     public LayerMask clickMask;
 
+    private GameController gc;
+
+    private void Awake()
+    {
+        gc = FindObjectOfType<GameController>();
+    }
+
     void Update()
     {
+        if (gc.GameOver)
+        {
+            return;
+        }
+
         // FIRST CLICK
         FirstClick();
 
@@ -24,12 +36,13 @@ public class InputHandler : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, Mathf.Infinity, clickMask);
+            RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, Mathf.Infinity, clickMask);    
 
             if (hit)
             {
                 selectedItem = hit.collider.gameObject;
                 selectedItem.GetComponent<Shape>().selected = true;
+                selectedItem.GetComponent<Shape>().LineEnabled(true);
             }
         }
     }
@@ -39,6 +52,8 @@ public class InputHandler : MonoBehaviour
         if (Input.GetMouseButton(0))
         {
             RaycastHit2D hit2 = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, Mathf.Infinity, clickMask);
+            //selectedItem.GetComponent<LineRenderer>().SetPosition(0, selectedItem.transform.position);
+            //selectedItem.GetComponent<LineRenderer>().SetPosition(1, Camera.main.ScreenToWorldPoint(Input.mousePosition));
 
             if (hit2)
             {
@@ -84,9 +99,10 @@ public class InputHandler : MonoBehaviour
             if(selectedItem != null)
             {
                 selectedItem.GetComponent<Shape>().selected = false;
-                //checkItem.GetComponent<Shape>().selected = false;
+                selectedItem.GetComponent<Shape>().LineEnabled(false);
+                //selectedItem.GetComponent<LineRenderer>().SetPosition(0, selectedItem.transform.position);
+                //selectedItem.GetComponent<LineRenderer>().SetPosition(1, selectedItem.transform.position);
                 selectedItem = null;
-                //checkItem = null;
             }
         }
     }
