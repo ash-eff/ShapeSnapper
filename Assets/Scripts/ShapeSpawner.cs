@@ -6,7 +6,6 @@ public class ShapeSpawner : MonoBehaviour
 {
     public Shape[] shapes;
     public LayerMask clickMask;
-    public float maxShapes;
 
     private GameController gc;
     private Camera cam;
@@ -28,13 +27,13 @@ public class ShapeSpawner : MonoBehaviour
     {
         while(!gc.GameOver)
         {           
-            while(gc.ShapesOnScreen < maxShapes)
+            while(gc.ShapesOnScreen < gc.maxShapes)
             {
                 float randX = Random.Range(-screenWidth, screenWidth);
                 float randY = Random.Range(-screenHeight, screenHeight);
                 Vector2 instPos = new Vector2(randX, randY);
                 // shoot ray and check area
-                RaycastHit2D hit = Physics2D.BoxCast(instPos, Vector2.one, 0, Vector2.zero);
+                RaycastHit2D hit = Physics2D.BoxCast(instPos, Vector2.one * 2, 0, Vector2.zero);
 
                 if (!hit) // if area is occupied, try again
                 {

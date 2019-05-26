@@ -17,6 +17,7 @@ public class GameController : MonoBehaviour
     public GameObject whiteOut;
     public GameObject[] crosses;
     public AudioClip[] chimes;
+    public Image dangerBar;
     public Color scoreTextColor1;
     public Color scoreTextColor2;
 
@@ -27,6 +28,7 @@ public class GameController : MonoBehaviour
     public float startingSpawnSpeed;
     public float spawnSpeedAdjust;
     public float minSpawnSpeed;
+    public int maxShapes;
 
     private int shapesOnScreen;
     public float spawnSpeed;
@@ -79,6 +81,14 @@ public class GameController : MonoBehaviour
             return;
         }
 
+        if(shapesOnScreen >= maxShapes)
+        {
+            gameOver = true;
+            StartCoroutine(FadeToEndScreen());
+        }
+
+        float fillAmt = shapesOnScreen / (float)maxShapes;
+        dangerBar.fillAmount = fillAmt;
         scoreText.text = score.ToString("0000");
         GameAdjust();
     }
@@ -155,7 +165,7 @@ public class GameController : MonoBehaviour
 
     public void Restart()
     {
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(1);
     }
 
     public void QuitGame()
